@@ -398,7 +398,36 @@ public class GuiCraftConfirm extends AEBaseGui {
             }
         }
 
+        this.sortVisual();
+
         this.setScrollBar();
+    }
+
+    private void sortVisual(){
+        List<IAEItemStack> currMissing = new ArrayList<>();
+        List<IAEItemStack> currToCraft = new ArrayList<>();
+        List<IAEItemStack> currPresent = new ArrayList<>();
+
+        for (var stack : visual) {
+            IAEItemStack missingStack = missing.findPrecise(stack);
+            IAEItemStack pendingStack = pending.findPrecise(stack);
+
+            // Handle Missing
+            if (missingStack != null && missingStack.getStackSize() > 0L) {
+                currMissing.add(stack);
+                continue;
+            }
+
+            if (pendingStack != null && pendingStack.getStackSize() > 0L)
+                currToCraft.add(stack);
+            else
+                currPresent.add(stack);
+        }
+
+        visual.clear();
+        visual.addAll(currMissing);
+        visual.addAll(currToCraft);
+        visual.addAll(currPresent);
     }
 
     private void handleInput(final IItemList<IAEItemStack> s, final IAEItemStack l) {
